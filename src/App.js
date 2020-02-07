@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import fetch from './mock-fetch.js'
+import fetch from './util/mock-fetch.js'
 
 class App extends React.Component {
   constructor(){
@@ -26,16 +26,20 @@ class App extends React.Component {
     }, 1000)
   }
 
-  updateRealCount(){
-    fetch('/current-view-count').then(res => res.json()).then((json)=>{
-      this.setState({ viewCount: json["view-count"] });
-    });
+  componentDidUpdate(){
+    document.title = this.state.viewCount;
   }
 
   componentWillUnmount(){
     clearInterval(this.iid1);
     clearInterval(this.iid2);
     clearInterval(this.iid3);
+  }
+
+  updateRealCount(){
+    fetch('/current-view-count').then(res => res.json()).then((json)=>{
+      this.setState({ viewCount: json["view-count"] });
+    });
   }
 
   render(){
