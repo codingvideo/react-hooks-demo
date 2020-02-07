@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateTime } from '../actions'
 
 function useTime(){
 
-  const [ time, setTime ] = useState(new Date());
+  const time = useSelector((state) => state.time);
+  const dispatch = useDispatch();
 
   useEffect(() => {
 
     const iid = setInterval(() => {
-      setTime(new Date());
+      dispatch(updateTime());
     }, 1000)
 
     return () => {

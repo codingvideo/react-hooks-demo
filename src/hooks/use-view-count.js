@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setViewCount, addOneViewCount } from '../actions'
 import fetch from '../util/mock-fetch.js';
 
-function updateRealCount(setViewCount){
+function getRealCount(cb){
   fetch('/current-view-count').then(res => res.json()).then((json)=>{
-    setViewCount(json["view-count"]);
+    cb(json["view-count"]);
   });
 }
 
 function useViewCount(startCount){
 
-  const [ viewCount, setViewCount ] = useState(startCount);
+  const viewCount = useSelector((state) => state.viewCount);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     
-    updateRealCount(setViewCount);
+    dispatch(setViewCount(startCount));
+
+    getRealCount((viewCount) => {
+      dispatch(setViewCount(viewCount));
+    });
 
     const iid1 = setInterval(() => {
-      setViewCount((viewCount) => {
-        return viewCount + 1;
-      });
+      dispatch(addOneViewCount());
     }, 3000);
     
     const iid2 = setInterval(() => {
-      updateRealCount(setViewCount);
+      getRealCount((viewCount) => {
+        dispatch(setViewCount(viewCount));
+      });
     }, 10000);
 
     return () => {
